@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+from os import system, getcwd
+import sys
+
+drop = True if len(sys.argv) > 1 else False
+services = ['mysql', 'nginx', 'redis']
+
+def toggle_state(state):
+    for service in services:
+        string = 'sudo service {} {}'.format(service, state)
+        system(string)
+
+def tear_down_services():
+    toggle_state('stop')
+    print('Computer systems down')
+    
+def set_up_docker():
+    system('docker-compose up -d nginx mysql redis beanstalkd')
+    print('Docker up')
+
+def tear_down_docker():
+    system('docker-compose down')
+    print('Docker down')
+
+def set_up_services():
+    toggle_state('start')
+    print('Services up')
+
+if drop == True:
+    tear_down_services()
+    set_up_docker()
+    print('Services is down and docker up')
+else:
+    tear_down_docker()
+    set_up_services()
+    print('Services is up and docker down')
